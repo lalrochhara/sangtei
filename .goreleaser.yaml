@@ -1,0 +1,126 @@
+project_name: Sangtei
+
+release:
+  replace_existing_draft: true
+  header: |
+    Welcome to this new release!
+
+  footer: |
+    Docker 🐳 images are available at:
+    `docker pull ghcr.io/lalrochhara/{{ .ProjectName }}:{{ .Tag }}`
+
+gomod:
+  env:
+    - CGO_ENABLED=1
+
+before:
+  hooks:
+    - go mod tidy
+    - go mod download
+
+# upx:
+#   - enabled: true
+#     brute: true
+
+builds:
+  - binary: Sangtei
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }}
+
+archives:
+  - rlcp: true
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ .Os }}{{ end }}_
+      {{- if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- with .Arm }}v{{ . }}{{ end }}
+      {{- with .Mips }}_{{ . }}{{ end }}
+      {{- if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+
+signs:
+  - artifacts: all
+    args:
+      - "-u"
+      - "C4223C5D4162629F38AF4DD530695AF88CC00E38"
+      - "--output"
+      - "${signature}"
+      - "--batch"
+      - "--yes"
+      - "--pinentry-mode"
+      - "loopback"
+      - "--passphrase"
+      - "$GPG_PASSPHRASE"
+      - "--detach-sign"
+      - "${artifact}"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - "^ci:"
+      - Merge pull request
+      - Merge branch
+
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+dockers:
+  - goarch: amd64
+    dockerfile: docker/goreleaser
+    use: buildx
+    image_templates:
+      - "ghcr.io/lalrochhara/{{ .ProjectName }}:{{ .Tag }}-amd64"
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+  - goarch: arm64
+    dockerfile: docker/goreleaser
+    use: buildx
+    image_templates:
+      - "ghcr.io/lalrochhara/{{ .ProjectName }}:{{ .Tag }}-arm64v8"
+    build_flag_templates:
+      - "--platform=linux/arm64/v8"
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+
+docker_manifests:
+  - name_template: "ghcr.io/lalrochhara/{{ .ProjectName }}:{{ .Version }}"
+    image_templates:
+      - "ghcr.io/lalrochhara/{{ .ProjectName }}:{{ .Tag }}-amd64"
+      - "ghcr.io/lalrochhara/{{ .ProjectName }}:{{ .Tag }}-arm64v8"
+  - name_template: "ghcr.io/lalrochhara/{{ .ProjectName }}:latest"
+    image_templates:
+      - "ghcr.io/lalrochhara/{{ .ProjectName }}:{{ .Tag }}-amd64"
+      - "ghcr.io/lalrochhara/{{ .ProjectName }}:{{ .Tag }}-arm64v8"
