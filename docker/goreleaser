@@ -1,0 +1,10 @@
+FROM alpine
+COPY Sangtei /
+ENTRYPOINT ["/Sangtei"]
+
+LABEL org.opencontainers.image.authors="Nicky Lalrochhara <nickylalrochhara917@gmail.com>"
+LABEL org.opencontainers.image.url="https://github.com/lalrochhara/Sangteim/lalrochhara/Sangtei"
+LABEL org.opencontainers.image.source="https://github.com/lalrochhara/Sangtei"
+LABEL org.opencontainers.image.title="Miss Sangtei Go"
+LABEL org.opencontainers.image.description="Official Miss Sangtei Go Docker Image"
+LABEL org.opencontainers.image.vendor="NickyLrca"
