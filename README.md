@@ -35,8 +35,9 @@ Sangtei is a Telegram Group managment bot made using **[Gotgbot](https://github.
 Can be found on Telegram as [@Sangtei](https://t.me/dSangteiBot)
 </br>
 
-Sangtei is currently available in 1 Language as of now:
+Sangtei is currently available in 2 Language as of now:
 - **US English**
+- **IN Mizo**
 
 More languages can be managed in the _locales_ folder. Although we have added support for languages in bot, we still need contributors to translate the bot to other languages.
 
