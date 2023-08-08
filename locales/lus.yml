@@ -2,7 +2,7 @@
 #stringcode: string
 main:
   lang_sample: |-
-    IN Mizo
+    IN lus
   language_flag: |-
     🇮🇳
   language_name: |-
@@ -11,7 +11,7 @@ strings:
   CommonStrings:
     admin_cache:
       cache_reloaded: |-
-        Admin cache chu Hlawhtling taka reload ani.
+        Admin cache chu Hlawhtling taka siamthat ani.
       not_found: |-
         Admincache hmuh anilo. Ask an admin to use /admincache to reload the admin cache.
   Admin:
